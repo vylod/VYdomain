@@ -40,6 +40,7 @@
             --text-secondary: #94a3b8;
             --border-color: #2d3139;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --error-color: #ef4444;
         }
 
         :root[data-theme="light"] {
@@ -49,6 +50,7 @@
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --error-color: #ef4444;
         }
 
         :root[data-color="purple"] { --primary: #8b5cf6; --primary-hover: #7c3aed; --primary-text: #fff; }
@@ -241,7 +243,7 @@
 
         .status.taken {
             background-color: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
+            color: var(--error-color);
         }
 
         .status.loading-status {
@@ -306,7 +308,7 @@
             color: var(--text-primary);
         }
 
-        /* تنسيقات التذييل (Footer) الجديدة */
+        /* تنسيقات التذييل (Footer) */
         .site-footer {
             margin-top: auto;
             padding: 20px;
@@ -327,6 +329,40 @@
 
         .site-footer a:hover {
             color: var(--primary);
+        }
+
+        /* تنسيقات الإشعار المخصص (Custom Alert) */
+        .custom-alert {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border-left: 5px solid var(--error-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 9999;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .custom-alert.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        [dir="rtl"] .custom-alert {
+            border-left: none;
+            border-right: 5px solid var(--error-color);
         }
 
         @keyframes pulse {
@@ -407,7 +443,10 @@
         <div class="results-container" id="resultsArea"></div>
     </main>
 
-    <!-- التذييل الجديد (Footer) -->
+    <!-- صندوق الإشعار المخصص -->
+    <div id="customAlert" class="custom-alert"></div>
+
+    <!-- التذييل -->
     <footer class="site-footer">
         <a href="https://github.com/vylod/VYdomain" target="_blank" rel="noopener noreferrer">
             website made by : sr vylod ● github repositorie
@@ -478,6 +517,7 @@
         const langSelector = document.getElementById('langSelector');
         const themeSelector = document.getElementById('themeSelector');
         const resultsArea = document.getElementById('resultsArea');
+        let alertTimeout; // متغير للتحكم في توقيت الإشعار
 
         function changeLanguage(lang) {
             currentLang = lang;
@@ -512,16 +552,34 @@
             htmlElement.setAttribute('data-color', e.target.value);
         });
 
+        // دالة لإظهار الإشعار المخصص بدلاً من رسالة المتصفح الافتراضية
+        function showCustomAlert(message) {
+            const alertBox = document.getElementById('customAlert');
+            alertBox.textContent = message;
+            alertBox.classList.add('show');
+            
+            // إعادة ضبط المؤقت حتى لا يختفي فوراً إذا ضغط المستخدم مرتين
+            clearTimeout(alertTimeout);
+            alertTimeout = setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3500); // يختفي بعد 3.5 ثانية
+        }
+
         const extensions = Object.keys(domainPrices); 
 
         function startSearch() {
             const inputElement = document.getElementById('domainInput');
-            let domainName = inputElement.value.trim().toLowerCase();
+            let originalValue = inputElement.value.trim();
+            let domainName = originalValue.toLowerCase().replace(/[^a-z0-9\-]/g, '');
 
-            domainName = domainName.replace(/[^a-z0-9\-]/g, '');
-
-            if (!domainName) {
-                alert(translations[currentLang].alertEmpty);
+            // التحقق مما إذا كان الحقل فارغاً
+            if (!originalValue || !domainName) {
+                // إعادة ضبط الصفحة بمسح منطقة النتائج
+                resultsArea.innerHTML = ''; 
+                inputElement.value = ''; // تصفير الحقل تحسباً لوجود مسافات فقط
+                
+                // استخدام الإشعار المخصص
+                showCustomAlert(translations[currentLang].alertEmpty);
                 return;
             }
 

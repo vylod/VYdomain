@@ -3,7 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- عنوان الموقع في المتصفح -->
     <title>VYdomain | Real Search</title>
+
+    <!-- 1. أيقونة المتصفح (Favicon) -->
+    <!-- استبدل "icon.png" بمسار أيقونتك -->
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon.png"> <!-- لأجهزة آبل -->
+
+    <!-- 2. إعدادات محركات البحث (SEO - Google) -->
+    <meta name="description" content="VYdomain is a fast tool to check actual domain name availability via DNS servers. ابحث عن النطاق المثالي لفكرتك.">
+    <meta name="keywords" content="vydomain, vylod, domain, check domain, domain availability, dns, website name, نطاقات, فحص الدومين, حجز دومين">
+    <meta name="author" content="VYdomain">
+    <meta name="robots" content="index, follow"> <!-- السماح لعناكب جوجل بأرشفة الموقع -->
+
+    <!-- 3. إعدادات المشاركة على وسائل التواصل (Open Graph / WhatsApp / Facebook) -->
+    <meta property="og:title" content="VYdomain | Real Search">
+    <meta property="og:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
+    <!-- هام: يجب وضع الرابط الكامل للصورة هنا لكي تظهر عند مشاركة الرابط -->
+    <meta property="og:image" content="https://vylod.github.io/VYdomain/screenshot.png"> 
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:type" content="website">
+
+    <!-- 4. إعدادات المشاركة على منصة X (تويتر سابقاً) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VYdomain | Real Search">
+    <meta name="twitter:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
+    <meta name="twitter:image" content="https://yourwebsite.com/preview-image.png">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
 
@@ -192,7 +220,6 @@
         .domain-card:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
-            /* تمت إضافة هذا السطر لرفع البطاقة فوق باقي البطاقات عند التمرير */
             z-index: 100;
         }
 
@@ -236,7 +263,6 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             padding: 12px;
-            /* تم تعديل هذا السطر لضمان ظهور النافذة فوق أي عنصر آخر */
             z-index: 999;
             opacity: 0;
             visibility: hidden;
@@ -357,7 +383,6 @@
         </div>
 
         <div class="results-container" id="resultsArea"></div>
-        <p>website by : sr vylod</p>
     </main>
 
     <script>
@@ -410,6 +435,7 @@
             htmlElement.lang = lang;
             htmlElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             
+            // تغيير العنوان مع اللغة ليتناسب مع محركات البحث أيضاً
             document.title = translations[lang].title;
             document.getElementById('heroTitle').textContent = translations[lang].heroTitle;
             document.getElementById('heroDesc').textContent = translations[lang].heroDesc;

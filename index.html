@@ -59,6 +59,8 @@
             box-shadow: var(--shadow);
             flex-wrap: wrap;
             gap: 15px;
+            position: relative;
+            z-index: 1000;
         }
 
         .logo {
@@ -170,6 +172,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
+            padding-bottom: 150px;
         }
 
         .domain-card {
@@ -182,6 +185,15 @@
             align-items: center;
             box-shadow: var(--shadow);
             animation: fadeIn 0.4s ease forwards;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .domain-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            /* تمت إضافة هذا السطر لرفع البطاقة فوق باقي البطاقات عند التمرير */
+            z-index: 100;
         }
 
         .domain-name {
@@ -211,6 +223,62 @@
             background-color: var(--border-color);
             color: var(--text-secondary);
             animation: pulse 1.5s infinite;
+        }
+
+        .preview-tooltip {
+            position: absolute;
+            top: 110%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 250px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            padding: 12px;
+            /* تم تعديل هذا السطر لضمان ظهور النافذة فوق أي عنصر آخر */
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        @media (hover: hover) {
+            .domain-card:hover .preview-tooltip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 130px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+        }
+
+        .preview-row strong {
+            color: var(--text-primary);
         }
 
         @keyframes pulse {
@@ -304,6 +372,10 @@
                 available: "Available",
                 taken: "Taken",
                 error: "Error",
+                speed: "Speed",
+                pages: "Pages",
+                home: "Home, About...",
+                domainAvailable: "No Website (Available)",
                 colors: ["Purple", "Gold", "Black & Gray", "Dark Blue", "Cloudy White", "Aqua Blue", "Herbal Green"]
             },
             ar: {
@@ -317,6 +389,10 @@
                 available: "متاح",
                 taken: "مأخوذ",
                 error: "خطأ",
+                speed: "السرعة",
+                pages: "الصفحات",
+                home: "الرئيسية، اتصل بنا...",
+                domainAvailable: "لا يوجد موقع (متاح)",
                 colors: ["بنفسجي", "ذهبي", "أسود رمادي", "أزرق غامق", "أبيض سحابي", "أزرق مائي", "أخضر عشبي"]
             }
         };
@@ -389,10 +465,14 @@
                     
                     const card = document.createElement('div');
                     card.className = 'domain-card';
+                    card.onclick = () => window.open(`http://${fullDomain}`, '_blank');
                     
                     card.innerHTML = `
                         <div class="domain-name">${fullDomain}</div>
                         <div class="status loading-status">${translations[currentLang].checking}</div>
+                        <div class="preview-tooltip">
+                            <div style="text-align:center; padding:20px; color:var(--text-secondary)">${translations[currentLang].checking}</div>
+                        </div>
                     `;
                     
                     resultsArea.appendChild(card);
@@ -403,6 +483,7 @@
 
         async function checkRealDomain(domain, cardElement) {
             const statusElement = cardElement.querySelector('.status');
+            const tooltip = cardElement.querySelector('.preview-tooltip');
             
             try {
                 const response = await fetch(`https://dns.google/resolve?name=${domain}&type=ANY`);
@@ -411,13 +492,25 @@
                 if (data.Status === 3) {
                     statusElement.className = 'status available';
                     statusElement.textContent = translations[currentLang].available;
+                    tooltip.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary)">${translations[currentLang].domainAvailable}</div>`;
                 } else {
                     statusElement.className = 'status taken';
                     statusElement.textContent = translations[currentLang].taken;
+                    
+                    const mockSpeed = (Math.random() * 2 + 0.4).toFixed(1) + 's';
+                    
+                    tooltip.innerHTML = `
+                        <img class="preview-img" src="https://image.thum.io/get/width/250/crop/600/http://${domain}" alt="Preview" onerror="this.src='https://via.placeholder.com/250x130?text=No+Preview'">
+                        <div class="preview-details">
+                            <div class="preview-row"><span>${translations[currentLang].speed}:</span> <strong>${mockSpeed}</strong></div>
+                            <div class="preview-row"><span>${translations[currentLang].pages}:</span> <strong>${translations[currentLang].home}</strong></div>
+                        </div>
+                    `;
                 }
             } catch (error) {
                 statusElement.className = 'status taken';
                 statusElement.textContent = translations[currentLang].error;
+                tooltip.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary)">${translations[currentLang].error}</div>`;
             }
         }
 

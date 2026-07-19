@@ -7,26 +7,24 @@
     <!-- عنوان الموقع في المتصفح -->
     <title>VYdomain | Real Search</title>
 
-    <!-- 1. أيقونة المتصفح (Favicon) -->
-    <!-- استبدل "icon.png" بمسار أيقونتك -->
+    <!-- أيقونة المتصفح (Favicon) -->
     <link rel="icon" href="icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="icon.png"> <!-- لأجهزة آبل -->
+    <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- 2. إعدادات محركات البحث (SEO - Google) -->
+    <!-- إعدادات محركات البحث (SEO - Google) -->
     <meta name="description" content="VYdomain is a fast tool to check actual domain name availability via DNS servers. ابحث عن النطاق المثالي لفكرتك.">
-    <meta name="keywords" content="vydomain, vylod, domain, check domain, domain availability, dns, website name, نطاقات, فحص الدومين, حجز دومين">
+    <meta name="keywords" content="domain, check domain, domain availability, dns, website name, نطاقات, فحص الدومين, حجز دومين">
     <meta name="author" content="VYdomain">
-    <meta name="robots" content="index, follow"> <!-- السماح لعناكب جوجل بأرشفة الموقع -->
+    <meta name="robots" content="index, follow">
 
-    <!-- 3. إعدادات المشاركة على وسائل التواصل (Open Graph / WhatsApp / Facebook) -->
+    <!-- إعدادات المشاركة على وسائل التواصل -->
     <meta property="og:title" content="VYdomain | Real Search">
     <meta property="og:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
-    <!-- هام: يجب وضع الرابط الكامل للصورة هنا لكي تظهر عند مشاركة الرابط -->
-    <meta property="og:image" content="https://vylod.github.io/VYdomain/screenshot.png"> 
+    <meta property="og:image" content="https://yourwebsite.com/preview-image.png"> 
     <meta property="og:url" content="https://yourwebsite.com">
     <meta property="og:type" content="website">
 
-    <!-- 4. إعدادات المشاركة على منصة X (تويتر سابقاً) -->
+    <!-- إعدادات المشاركة على منصة X -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="VYdomain | Real Search">
     <meta name="twitter:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
@@ -200,7 +198,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
-            padding-bottom: 150px;
+            padding-bottom: 50px;
         }
 
         .domain-card {
@@ -300,11 +298,35 @@
         .preview-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             color: var(--text-secondary);
         }
 
         .preview-row strong {
             color: var(--text-primary);
+        }
+
+        /* تنسيقات التذييل (Footer) الجديدة */
+        .site-footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .site-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .site-footer a:hover {
+            color: var(--primary);
         }
 
         @keyframes pulse {
@@ -383,8 +405,14 @@
         </div>
 
         <div class="results-container" id="resultsArea"></div>
-        <p> website made by : sr vylod ● <a href="https://github.com/vylod/VYdomain" > github repositorie </a> </p>
     </main>
+
+    <!-- التذييل الجديد (Footer) -->
+    <footer class="site-footer">
+        <a href="https://github.com/vylod/VYdomain" target="_blank" rel="noopener noreferrer">
+            website made by : sr vylod ● github repositorie
+        </a>
+    </footer>
 
     <script>
         const translations = {
@@ -402,7 +430,9 @@
                 speed: "Speed",
                 pages: "Pages",
                 home: "Home, About...",
-                domainAvailable: "No Website (Available)",
+                domainAvailable: "Domain is available for registration",
+                price: "Estimated Price",
+                perYear: "/ year",
                 colors: ["Purple", "Gold", "Black & Gray", "Dark Blue", "Cloudy White", "Aqua Blue", "Herbal Green"]
             },
             ar: {
@@ -419,10 +449,28 @@
                 speed: "السرعة",
                 pages: "الصفحات",
                 home: "الرئيسية، اتصل بنا...",
-                domainAvailable: "لا يوجد موقع (متاح)",
+                domainAvailable: "النطاق متاح للتسجيل",
+                price: "السعر التقريبي",
+                perYear: "/ سنوياً",
                 colors: ["بنفسجي", "ذهبي", "أسود رمادي", "أزرق غامق", "أبيض سحابي", "أزرق مائي", "أخضر عشبي"]
             }
         };
+
+        const domainPrices = {
+            '.com': '$10.99', '.net': '$12.99', '.org': '$11.99', '.info': '$14.99',
+            '.biz': '$15.99', '.co': '$25.99', '.io': '$39.99', '.ai': '$69.99',
+            '.app': '$14.99', '.dev': '$14.99', '.tech': '$4.99', '.network': '$18.99',
+            '.store': '$1.99', '.shop': '$2.99', '.online': '$1.99', '.market': '$24.99',
+            '.me': '$18.99', '.tv': '$29.99', '.design': '$4.99', '.art': '$13.99',
+            '.blog': '$24.99', '.pro': '$16.99', '.site': '$1.99', '.website': '$1.99',
+            '.space': '$1.99', '.club': '$13.99', '.xyz': '$1.99', '.global': '$69.99',
+            '.us': '$7.99', '.uk': '$6.99', '.ca': '$11.99', '.in': '$5.99'
+        };
+
+        function getDomainPrice(domain) {
+            const ext = domain.substring(domain.lastIndexOf('.'));
+            return domainPrices[ext] || '$12.99'; 
+        }
 
         let currentLang = 'en';
 
@@ -436,7 +484,6 @@
             htmlElement.lang = lang;
             htmlElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             
-            // تغيير العنوان مع اللغة ليتناسب مع محركات البحث أيضاً
             document.title = translations[lang].title;
             document.getElementById('heroTitle').textContent = translations[lang].heroTitle;
             document.getElementById('heroDesc').textContent = translations[lang].heroDesc;
@@ -465,14 +512,7 @@
             htmlElement.setAttribute('data-color', e.target.value);
         });
 
-        const extensions = [
-            '.com', '.net', '.org', '.info', '.biz', '.co',
-            '.io', '.ai', '.app', '.dev', '.tech', '.network',
-            '.store', '.shop', '.online', '.market',
-            '.me', '.tv', '.design', '.art', '.blog', '.pro',
-            '.site', '.website', '.space', '.club', '.xyz', '.global',
-            '.us', '.uk', '.ca', '.in'
-        ];
+        const extensions = Object.keys(domainPrices); 
 
         function startSearch() {
             const inputElement = document.getElementById('domainInput');
@@ -520,7 +560,21 @@
                 if (data.Status === 3) {
                     statusElement.className = 'status available';
                     statusElement.textContent = translations[currentLang].available;
-                    tooltip.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary)">${translations[currentLang].domainAvailable}</div>`;
+                    
+                    const price = getDomainPrice(domain);
+                    
+                    tooltip.innerHTML = `
+                        <div style="text-align:center; padding:8px;">
+                            <div style="color: #10b981; font-weight: bold; margin-bottom: 12px;">${translations[currentLang].domainAvailable}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">${translations[currentLang].price}:</span>
+                                <div>
+                                    <strong style="color: var(--text-primary); font-size: 1.2rem;">${price}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${translations[currentLang].perYear}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 } else {
                     statusElement.className = 'status taken';
                     statusElement.textContent = translations[currentLang].taken;

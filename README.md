@@ -14,3 +14,4 @@ made by : sr vylod
 # ● get a WEBSITE status and infos.
 
 <img width="1287" height="956" alt="image" src="https://github.com/user-attachments/assets/0c7dc65d-d499-42f8-bec5-dc28996c6678" />
+<img width="1287" height="956" alt="image" src="https://github.com/user-attachments/assets/98291e60-8790-4b3a-8b98-6e0d0d57ec56" />

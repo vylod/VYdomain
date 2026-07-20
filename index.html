@@ -7,28 +7,26 @@
     <!-- عنوان الموقع في المتصفح -->
     <title>VYdomain | Real Search</title>
 
-    <!-- أيقونة المتصفح (Favicon) -->
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
-
-    <!-- إعدادات محركات البحث (SEO - Google) -->
-    <meta name="description" content="VYdomain is a fast tool to check actual domain name availability via DNS servers. ابحث عن النطاق المثالي لفكرتك.">
+    
+     <meta name="description" content="VYdomain is a fast tool to check actual domain name availability via DNS servers. ابحث عن النطاق المثالي لفكرتك.">
     <meta name="keywords" content="vydomain, vylod, domain, check domain, domain availability, dns, website name, نطاقات, فحص الدومين, حجز دومين">
     <meta name="author" content="VYdomain">
     <meta name="robots" content="index, follow">
-
-    <!-- إعدادات المشاركة على وسائل التواصل -->
+ 
+ 
     <meta property="og:title" content="VYdomain | Real Search">
     <meta property="og:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
-    <meta property="og:image" content="https://yourwebsite.com/preview-image.png"> 
+    <meta property="og:image" content="https://yourwebsite.com/preview-image.png">
     <meta property="og:url" content="https://yourwebsite.com">
     <meta property="og:type" content="website">
-
-    <!-- إعدادات المشاركة على منصة X -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="VYdomain | Real Search">
-    <meta name="twitter:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
-    <meta name="twitter:image" content="https://yourwebsite.com/preview-image.png">
+ 
+ 
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:title" content="VYdomain | Real Search">
+   <meta name="twitter:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
+   <meta name="twitter:image" content="https://yourwebsite.com/preview-image.png">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
@@ -201,6 +199,94 @@
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
             padding-bottom: 50px;
+        }
+
+        /* تنسيقات البطاقة الكبيرة للامتدادات والنطاقات الكاملة */
+        .large-card {
+            grid-column: 1 / -1;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.4s ease forwards;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .large-card-header {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            direction: ltr;
+        }
+
+        .large-card-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .large-card-img {
+            flex: 1;
+            min-width: 300px;
+            height: 250px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            object-fit: cover;
+            background: var(--bg-color);
+        }
+
+        .large-card-details {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-row span {
+            color: var(--text-secondary);
+        }
+
+        .buy-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .buy-links a {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--primary-text);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .buy-links a:hover {
+            background: var(--primary-hover);
         }
 
         .domain-card {
@@ -400,6 +486,9 @@
             .controls {
                 justify-content: center;
             }
+            .large-card-img {
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -436,7 +525,7 @@
         </div>
 
         <div class="search-box">
-            <input type="text" id="domainInput" placeholder="Enter name here (e.g. myproject)" autocomplete="off" spellcheck="false">
+            <input type="text" id="domainInput" placeholder="Enter name here (e.g. myproject or .com or google.com)" autocomplete="off" spellcheck="false">
             <button id="searchBtn" onclick="startSearch()">Search</button>
         </div>
 
@@ -459,7 +548,7 @@
                 title: "VYdomain | Real Search",
                 heroTitle: "Find the Perfect Domain for Your Idea",
                 heroDesc: "Enter a name to check actual domain availability via DNS servers.",
-                placeholder: "Enter name here (e.g. myproject)",
+                placeholder: "Enter name here (e.g. myproject or .com or google.com)",
                 searchBtn: "Search",
                 alertEmpty: "Please enter a valid name (English letters and numbers only).",
                 checking: "Checking...",
@@ -472,13 +561,19 @@
                 domainAvailable: "Domain is available for registration",
                 price: "Estimated Price",
                 perYear: "/ year",
-                colors: ["Purple", "Gold", "Black & Gray", "Dark Blue", "Cloudy White", "Aqua Blue", "Herbal Green"]
+                colors: ["Purple", "Gold", "Black & Gray", "Dark Blue", "Cloudy White", "Aqua Blue", "Herbal Green"],
+                statusLabel: "Status",
+                infoLabel: "Description",
+                buyHere: "Buy From:",
+                visitWebsite: "Visit Website",
+                registerNow: "Register Now",
+                noWebsite: "No Website Published Yet"
             },
             ar: {
                 title: "VYdomain | بحث حقيقي",
                 heroTitle: "ابحث عن النطاق المثالي لفكرتك",
                 heroDesc: "أدخل الاسم للتحقق الفعلي من توفر النطاقات عبر خوادم DNS.",
-                placeholder: "أدخل الاسم هنا (مثال: myproject)",
+                placeholder: "أدخل الاسم هنا (مثال: myproject أو .com أو google.com)",
                 searchBtn: "بحث",
                 alertEmpty: "يرجى إدخال اسم صحيح للبحث (حروف إنجليزية وأرقام فقط).",
                 checking: "جاري الفحص...",
@@ -491,7 +586,13 @@
                 domainAvailable: "النطاق متاح للتسجيل",
                 price: "السعر التقريبي",
                 perYear: "/ سنوياً",
-                colors: ["بنفسجي", "ذهبي", "أسود رمادي", "أزرق غامق", "أبيض سحابي", "أزرق مائي", "أخضر عشبي"]
+                colors: ["بنفسجي", "ذهبي", "أسود رمادي", "أزرق غامق", "أبيض سحابي", "أزرق مائي", "أخضر عشبي"],
+                statusLabel: "الحالة",
+                infoLabel: "الوصف",
+                buyHere: "أماكن الشراء:",
+                visitWebsite: "زيارة الموقع",
+                registerNow: "سجل الآن",
+                noWebsite: "لا يوجد موقع منشور بعد"
             }
         };
 
@@ -506,9 +607,34 @@
             '.us': '$7.99', '.uk': '$6.99', '.ca': '$11.99', '.in': '$5.99'
         };
 
+        const tldInfo = {
+            en: {
+                '.com': 'Commercial businesses and general purpose.',
+                '.net': 'Network infrastructures and technology.',
+                '.org': 'Organizations, non-profits, and communities.',
+                '.info': 'Informational sites and resources.',
+                '.io': 'Tech startups, software, and games.',
+                '.ai': 'Artificial Intelligence projects.',
+                'default': 'A popular domain extension for global use.'
+            },
+            ar: {
+                '.com': 'الأعمال التجارية والأغراض العامة.',
+                '.net': 'البنى التحتية للشبكات والتكنولوجيا.',
+                '.org': 'المنظمات غير الربحية والمجتمعات.',
+                '.info': 'المواقع المعلوماتية والمصادر.',
+                '.io': 'الشركات التقنية الناشئة والبرمجيات والألعاب.',
+                '.ai': 'مشاريع الذكاء الاصطناعي.',
+                'default': 'امتداد نطاق شهير للاستخدام العالمي.'
+            }
+        };
+
         function getDomainPrice(domain) {
             const ext = domain.substring(domain.lastIndexOf('.'));
             return domainPrices[ext] || '$12.99'; 
+        }
+
+        function getTldDescription(ext) {
+            return tldInfo[currentLang][ext] || tldInfo[currentLang]['default'];
         }
 
         let currentLang = 'en';
@@ -517,7 +643,7 @@
         const langSelector = document.getElementById('langSelector');
         const themeSelector = document.getElementById('themeSelector');
         const resultsArea = document.getElementById('resultsArea');
-        let alertTimeout; // متغير للتحكم في توقيت الإشعار
+        let alertTimeout;
 
         function changeLanguage(lang) {
             currentLang = lang;
@@ -552,38 +678,50 @@
             htmlElement.setAttribute('data-color', e.target.value);
         });
 
-        // دالة لإظهار الإشعار المخصص بدلاً من رسالة المتصفح الافتراضية
         function showCustomAlert(message) {
             const alertBox = document.getElementById('customAlert');
             alertBox.textContent = message;
             alertBox.classList.add('show');
             
-            // إعادة ضبط المؤقت حتى لا يختفي فوراً إذا ضغط المستخدم مرتين
             clearTimeout(alertTimeout);
             alertTimeout = setTimeout(() => {
                 alertBox.classList.remove('show');
-            }, 3500); // يختفي بعد 3.5 ثانية
+            }, 3500); 
         }
 
         const extensions = Object.keys(domainPrices); 
 
         function startSearch() {
             const inputElement = document.getElementById('domainInput');
-            let originalValue = inputElement.value.trim();
-            let domainName = originalValue.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+            let originalValue = inputElement.value.trim().toLowerCase();
 
-            // التحقق مما إذا كان الحقل فارغاً
-            if (!originalValue || !domainName) {
-                // إعادة ضبط الصفحة بمسح منطقة النتائج
+            if (!originalValue) {
                 resultsArea.innerHTML = ''; 
-                inputElement.value = ''; // تصفير الحقل تحسباً لوجود مسافات فقط
-                
-                // استخدام الإشعار المخصص
+                inputElement.value = '';
                 showCustomAlert(translations[currentLang].alertEmpty);
                 return;
             }
 
             resultsArea.innerHTML = ''; 
+
+            // ميزة 1: إذا كان الإدخال يبدأ بنقطة (امتداد مثل .com)
+            if (originalValue.startsWith('.')) {
+                showExtensionInfo(originalValue);
+                return;
+            }
+
+            // ميزة 2: إذا كان الإدخال يحتوي على نقطة في الوسط (موقع كامل مثل google.com)
+            if (originalValue.includes('.')) {
+                showFullDomainInfo(originalValue);
+                return;
+            }
+
+            // البحث العادي في حال إدخال اسم فقط
+            let domainName = originalValue.replace(/[^a-z0-9\-]/g, '');
+            if (!domainName) {
+                showCustomAlert(translations[currentLang].alertEmpty);
+                return;
+            }
 
             extensions.forEach((ext, index) => {
                 setTimeout(() => {
@@ -605,6 +743,97 @@
                     checkRealDomain(fullDomain, card);
                 }, index * 20);
             });
+        }
+
+        function showExtensionInfo(ext) {
+            const price = domainPrices[ext] || '$12.99';
+            const description = getTldDescription(ext);
+            const pureExt = ext.replace('.', '');
+
+            const card = document.createElement('div');
+            card.className = 'large-card';
+            card.innerHTML = `
+                <div class="large-card-header">${ext}</div>
+                <div class="large-card-content">
+                    <div class="large-card-details">
+                        <div class="info-row">
+                            <span>${translations[currentLang].price}:</span>
+                            <strong style="color: var(--text-primary)">${price} ${translations[currentLang].perYear}</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>${translations[currentLang].infoLabel}:</span>
+                            <strong style="color: var(--text-primary)">${description}</strong>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div style="color:var(--text-secondary); margin-bottom:10px;">${translations[currentLang].buyHere}</div>
+                            <div class="buy-links">
+                                <a href="https://www.namecheap.com/domains/registration/results/?domain=${pureExt}" target="_blank">Namecheap</a>
+                                <a href="https://www.godaddy.com/domainsearch/find?domainToCheck=${pureExt}" target="_blank">GoDaddy</a>
+                                <a href="https://domains.google.com/registrar/search?searchTerm=${pureExt}" target="_blank">Google Domains</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultsArea.appendChild(card);
+        }
+
+        async function showFullDomainInfo(domain) {
+            const card = document.createElement('div');
+            card.className = 'large-card';
+            card.innerHTML = `<div style="text-align:center; padding: 40px; font-size: 1.2rem; color: var(--text-secondary);">${translations[currentLang].checking}</div>`;
+            resultsArea.appendChild(card);
+
+            try {
+                const response = await fetch(`https://dns.google/resolve?name=${domain}&type=ANY`);
+                const data = await response.json();
+
+                const isAvailable = data.Status === 3;
+                const statusText = isAvailable ? translations[currentLang].available : translations[currentLang].taken;
+                const statusColor = isAvailable ? '#10b981' : 'var(--error-color)';
+                const mockSpeed = (Math.random() * 2 + 0.4).toFixed(1) + 's';
+                const price = getDomainPrice(domain);
+
+                card.innerHTML = `
+                    <div class="large-card-header">${domain}</div>
+                    <div class="large-card-content">
+                        ${!isAvailable 
+                            ? `<img class="large-card-img" src="https://image.thum.io/get/width/600/crop/800/http://${domain}" onerror="this.src='https://via.placeholder.com/600x400?text=No+Preview'" alt="${domain}">` 
+                            : `<div class="large-card-img" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--text-secondary)">${translations[currentLang].noWebsite}</div>`
+                        }
+                        <div class="large-card-details">
+                            <div class="info-row">
+                                <span>${translations[currentLang].statusLabel}:</span>
+                                <strong style="color: ${statusColor}">${statusText}</strong>
+                            </div>
+                            
+                            ${!isAvailable ? `
+                            <div class="info-row">
+                                <span>${translations[currentLang].speed}:</span>
+                                <strong style="color: var(--text-primary)">${mockSpeed}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>${translations[currentLang].pages}:</span>
+                                <strong style="color: var(--text-primary)">${translations[currentLang].home}</strong>
+                            </div>
+                            <div class="buy-links" style="margin-top:20px;">
+                                <a href="http://${domain}" target="_blank">${translations[currentLang].visitWebsite}</a>
+                            </div>
+                            ` : `
+                            <div class="info-row">
+                                <span>${translations[currentLang].price}:</span>
+                                <strong style="color: var(--text-primary)">${price} ${translations[currentLang].perYear}</strong>
+                            </div>
+                            <div class="buy-links" style="margin-top:20px;">
+                                <a href="https://www.namecheap.com/domains/registration/results/?domain=${domain}" target="_blank">${translations[currentLang].registerNow}</a>
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                card.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--error-color); font-size: 1.2rem;">${translations[currentLang].error}</div>`;
+            }
         }
 
         async function checkRealDomain(domain, cardElement) {

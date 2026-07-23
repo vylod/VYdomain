@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark" data-color="purple">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- تطبيق التفضيلات المحفوظة فوراً لمنع وميض الشاشة (FOUC) -->
+    <script>
+        (function () {
+            try {
+                var html = document.documentElement;
+                var t = localStorage.getItem('vydomain-theme');
+                var c = localStorage.getItem('vydomain-color');
+                var l = localStorage.getItem('vydomain-lang');
+                if (t === 'dark' || t === 'light') html.setAttribute('data-theme', t);
+                if (c) html.setAttribute('data-color', c);
+                if (l === 'ar' || l === 'en') {
+                    html.setAttribute('lang', l);
+                    html.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr');
+                }
+            } catch (e) { /* localStorage may be unavailable, defaults apply */ }
+        })();
+    </script>
+
+    <title>VYdomain | Real Search</title>
+
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="canonical" href="https://vylod.github.io/VYdomain">
+    <meta name="theme-color" content="#0f1115">
+
+    <meta name="description" content="VYdomain is a fast tool to check actual domain name availability via DNS servers. ابحث عن النطاق المثالي لفكرتك.">
+    <meta name="keywords" content="vydomain, vylod, domain, check domain, domain availability, dns, website name, نطاقات, فحص الدومين, حجز دومين">
+    <meta name="author" content="VYdomain">
+    <meta name="robots" content="index, follow">
+
+    <!-- سياسة أمان المحتوى: تقييد مصادر التحميل لتقليل مخاطر XSS وحقن السكربتات -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src https://dns.google; base-uri 'self'; form-action 'none'; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <meta property="og:title" content="VYdomain | Real Search">
+    <meta property="og:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
+    <meta property="og:image" content="https://vylod.github.io/VYdomain/screenshot.png">
+    <meta property="og:url" content="https://vylod.github.io/VYdomain">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VYdomain | Real Search">
+    <meta name="twitter:description" content="Find the perfect domain for your idea with real-time DNS availability check.">
+    <meta name="twitter:image" content="https://vylod.github.io/VYdomain/screenshot.png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+        :root[data-theme="dark"] {
+            --bg-color: #0f1115;
+            --surface-color: #1c1f26;
+            --surface-color-2: #22262f;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: #2d3139;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --overlay-scrim: rgba(0, 0, 0, 0.6);
+        }
+
+        :root[data-theme="light"] {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --surface-color-2: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --error-color: #dc2626;
+            --success-color: #059669;
+            --overlay-scrim: rgba(15, 23, 42, 0.4);
+        }
+
+        :root[data-color="purple"] { --primary: #8b5cf6; --primary-hover: #7c3aed; --primary-text: #fff; --primary-soft: rgba(139, 92, 246, 0.12); }
+        :root[data-color="gold"] { --primary: #fbbf24; --primary-hover: #f59e0b; --primary-text: #000; --primary-soft: rgba(251, 191, 36, 0.14); }
+        :root[data-color="black-gray"] { --primary: #475569; --primary-hover: #334155; --primary-text: #fff; --primary-soft: rgba(71, 85, 105, 0.14); }
+        :root[data-color="dark-blue"] { --primary: #1e3a8a; --primary-hover: #1e40af; --primary-text: #fff; --primary-soft: rgba(30, 58, 138, 0.14); }
+        :root[data-color="cloudy-white"] { --primary: #e2e8f0; --primary-hover: #cbd5e1; --primary-text: #000; --primary-soft: rgba(226, 232, 240, 0.14); }
+        :root[data-color="aqua-blue"] { --primary: #06b6d4; --primary-hover: #0891b2; --primary-text: #fff; --primary-soft: rgba(6, 182, 212, 0.14); }
+        :root[data-color="herbal-green"] { --primary: #10b981; --primary-hover: #059669; --primary-text: #fff; --primary-soft: rgba(16, 185, 129, 0.14); }
+
+        :root {
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --font-ui: 'Tajawal', sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-ui);
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 15% 0%, var(--primary-soft), transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { color: inherit; }
+
+        ::selection { background-color: var(--primary); color: var(--primary-text); }
+
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .logo-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: var(--primary-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .logo span.brand-vy { color: var(--primary); }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            
+        }
+
+        select, button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        select:hover, button:hover { border-color: var(--primary); }
+
+        button.toggle-mode {
+            background-color: var(--surface-color-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 56px 20px 40px;
+        }
+
+        .hero-text {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 700px;
+        }
+
+        
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            animation: pulseDot 1.6s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .hero-text h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+        }
+
+        .hero-text p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--surface-color);
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: var(--shadow), 0 0 0 3px var(--primary-soft);
+        }
+
+        .search-box:focus-within :focus-visible { outline: none; }
+
+        .search-input-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 15px 34px 15px 15px;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            outline: none;
+            direction: ltr;
+            text-align: left;
+            font-family: var(--font-mono);
+            width: 100%;
+        }
+
+        [dir="rtl"] .search-box input { padding: 15px 15px 15px 34px; }
+
+        .clear-input-btn {
+            position: absolute;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: var(--surface-color-2);
+            color: var(--text-secondary);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        [dir="rtl"] .clear-input-btn { right: auto; left: 8px; }
+
+        .clear-input-btn.visible { display: flex; }
+        .clear-input-btn:hover { color: var(--error-color); border-color: var(--error-color); }
+
+        .search-box button.search-submit {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            border: none;
+            padding: 0 24px;
+            height: 52px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 6px;
+            transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .search-box button.search-submit:hover { background-color: var(--primary-hover); }
+        .search-box button.search-submit:active { transform: scale(0.97); }
+        .search-box button.search-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+        .spinner {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: currentColor;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .search-submit.loading .spinner { display: inline-block; }
+        .search-submit.loading .btn-label { display: none; }
+
+        .popular-tlds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin-top: 18px;
+            
+      }
+
+        .popular-tlds .popular-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-inline-end: 2px;
+            
+        }
+
+        .chip {
+            border: 1px solid var(--border-color);
+            background-color: var(--surface-color);
+            color: var(--text-secondary);
+            padding: 6px 13px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            direction: ltr;
+        }
+
+        .chip:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .results-summary {
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 34px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-summary.visible { display: flex; }
+
+        .summary-counts { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-family: var(--font-mono); }
+
+        .summary-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+        .summary-pill.available .dot { background-color: var(--success-color); }
+        .summary-pill.taken .dot { background-color: var(--error-color); }
+
+        .sort-toggle {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            padding: 6px 12px;
+        }
+
+        .sort-toggle:hover { color: var(--text-primary); border-color: var(--primary); }
+
+        .results-container {
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 14px;
+            padding-bottom: 50px;
+        }
+
+        .large-card {
+            grid-column: 1 / -1;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.4s ease forwards;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .large-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            direction: ltr;
+            font-family: var(--font-mono);
+        }
+
+        .large-card-header img { width: 28px; height: 28px; border-radius: 6px; }
+
+        .large-card-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .large-card-img {
+            flex: 1;
+            min-width: 300px;
+            height: 250px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            object-fit: cover;
+            background: var(--bg-color);
+        }
+
+        .large-card-details {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 1.05rem;
+            gap: 10px;
+        }
+
+        .info-row span { color: var(--text-secondary); }
+
+        .buy-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .buy-links a {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--primary-text);
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .buy-links a:hover { background: var(--primary-hover); }
+
+        .domain-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 15px 16px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.4s ease forwards;
+            cursor: default;
+            position: relative;
+            gap: 8px;
+        }
+
+        [dir="rtl"] .domain-card { padding: 15px 20px 15px 16px; }
+
+        .domain-card.clickable { cursor: pointer; }
+
+        .domain-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            z-index: 100;
+        }
+
+        .domain-card-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .domain-name {
+            font-size: 1.02rem;
+            font-weight: 500;
+            direction: ltr;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status-cluster { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+        .copy-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            padding: 2px 4px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover { color: var(--primary); }
+
+        .status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            white-space: nowrap;
+        }
+
+        .status.available { background-color: rgba(16, 185, 129, 0.12); color: var(--success-color); }
+        .status.taken { background-color: rgba(239, 68, 68, 0.12); color: var(--error-color); }
+
+        .status.loading-status {
+            background-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .status.loading-status::after {
+            content: '▌';
+            margin-inline-start: 2px;
+            animation: blink 1s steps(1) infinite;
+        }
+
+        .preview-tooltip {
+            position: absolute;
+            top: 110%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 250px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        @media (hover: hover) {
+            .domain-card:hover .preview-tooltip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 130px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-details { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+
+        .preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .preview-row strong { color: var(--text-primary); }
+
+        .site-footer {
+            margin-top: auto;
+            padding: 22px 20px;
+            text-align: center;
+            background-color: var(--surface-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .site-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .site-footer a:hover { color: var(--primary); }
+
+        .footer-note {
+            color: var(--text-secondary);
+            opacity: 0.7;
+            font-size: 0.78rem;
+        }
+
+        .custom-alert {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            padding: 14px 22px;
+            border-radius: var(--radius-md);
+            border-left: 5px solid var(--error-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 9999;
+            font-size: 0.95rem;
+            font-weight: 500;
+            max-width: 90vw;
+        }
+
+        .custom-alert.success { border-left-color: var(--success-color); }
+
+        .custom-alert.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        [dir="rtl"] .custom-alert { border-left: none; border-right: 5px solid var(--error-color); }
+        [dir="rtl"] .custom-alert.success { border-right-color: var(--success-color); border-left: none; }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .search-box {
+                flex-wrap: wrap;
+                background: transparent;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                gap: 10px;
+            }
+            .search-input-wrap {
+                width: 100%;
+                background-color: var(--surface-color);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+            }
+            .search-box input { text-align: center; padding-inline-end: 34px; }
+            .search-box button.search-submit { width: 100%; justify-content: center; }
+            header { flex-direction: column; }
+            .controls { justify-content: center; }
+            .large-card-img { height: 200px; }
+            .hero-text h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <div class="logo-badge">VY</div>
+            <div><span class="brand-vy"></span>domain</div>
+        </div>
+        <div class="controls">
+            <select id="langSelector" aria-label="Language">
+                <option value="en">English</option>
+                <option value="ar">العربية</option>
+            </select>
+
+            <select id="themeSelector" aria-label="Accent color">
+                <option value="purple">Purple</option>
+                <option value="gold">Gold</option>
+                <option value="black-gray">Black &amp; Gray</option>
+                <option value="dark-blue">Dark Blue</option>
+                <option value="cloudy-white">Cloudy White</option>
+                <option value="aqua-blue">Aqua Blue</option>
+                <option value="herbal-green">Herbal Green</option>
+            </select>
+
+            <button id="modeToggle" class="toggle-mode" title="Toggle Mode" aria-label="Toggle light/dark mode">🌙</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero-text">
+            
+            <h1 id="heroTitle">Find the Perfect Domain for Your Idea</h1>
+            <p id="heroDesc">Enter a name to check actual domain availability via DNS servers.</p>
+        </div>
+
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <input type="text" id="domainInput" placeholder="Enter name here (e.g. myproject or .com or google.com)" autocomplete="off" spellcheck="false" maxlength="253" aria-label="Domain or extension">
+                <button type="button" class="clear-input-btn" id="clearInputBtn" title="Clear" aria-label="Clear">✕</button>
+            </div>
+            <button id="searchBtn" class="search-submit" onclick="startSearch()">
+                <span class="spinner"></span>
+                <span class="btn-label" id="searchBtnLabel">Search</span>
+            </button>
+        </div>
+
+        <div class="popular-tlds" id="popularTlds">
+            <span class="popular-label" id="popularLabel">Popular:</span>
+        </div>
+
+        <div class="results-summary" id="resultsSummary" aria-live="polite">
+            <div class="summary-counts" id="summaryCounts"></div>
+            <button type="button" class="sort-toggle" id="sortToggle">Show available first</button>
+        </div>
+
+        <div class="results-container" id="resultsArea" aria-live="polite"></div>
+    </main>
+
+    <div id="customAlert" class="custom-alert" role="status"></div>
+
+    <footer class="site-footer">
+        <a href="https://github.com/vylod/VYdomain" target="_blank" rel="noopener noreferrer">
+            website made by : sr vylod ● github repository
+        </a>
+        <span class="footer-note" id="footerNote">Prices shown are estimates. Confirm the final price with the registrar before purchasing.</span>
+    </footer>
+
+    <script>
+        'use strict';
+
+        const translations = {
+            en: {
+                title: "VYdomain | Real Search",
+                eyebrow: "Live DNS Lookup",
+                heroTitle: "Find the Perfect Domain for Your Idea",
+                heroDesc: "Enter a name to check actual domain availability via DNS servers.",
+                placeholder: "Enter name here (e.g. myproject or .com or google.com)",
+                searchBtn: "Search",
+                alertEmpty: "Please enter a valid name (English letters and numbers only).",
+                alertInvalidDomain: "Please enter a valid domain format, e.g. example.com.",
+                alertInvalidExt: "Please enter a valid extension, e.g. .com.",
+                checking: "Checking...",
+                available: "Available",
+                taken: "Taken",
+                error: "Error",
+                timeout: "Timed out",
+                speed: "Speed",
+                pages: "Pages",
+                home: "Home, About...",
+                domainAvailable: "Domain is available for registration",
+                price: "Estimated Price",
+                perYear: "/ year",
+                colors: ["Purple", "Gold", "Black & Gray", "Dark Blue", "Cloudy White", "Aqua Blue", "Herbal Green"],
+                statusLabel: "Status",
+                infoLabel: "Description",
+                buyHere: "Buy From:",
+                visitWebsite: "Visit Website",
+                registerNow: "Register Now",
+                noWebsite: "No Website Published Yet",
+                popularLabel: "Popular:",
+                copied: "Domain copied to clipboard",
+                copyFailed: "Couldn't copy, please try manually",
+                copyTitle: "Copy domain",
+                clearTitle: "Clear",
+                sortAvailableFirst: "Show available first",
+                sortDefaultOrder: "Default order",
+                summaryAvailable: "available",
+                summaryChecked: "checked",
+                modeToLight: "Switch to light mode",
+                modeToDark: "Switch to dark mode",
+                footerNote: "Prices shown are estimates. Confirm the final price with the registrar before purchasing."
+            },
+            ar: {
+                title: "VYdomain | بحث حقيقي",
+                eyebrow: "فحص DNS مباشر",
+                heroTitle: "ابحث عن النطاق المثالي لفكرتك",
+                heroDesc: "أدخل الاسم للتحقق الفعلي من توفر النطاقات عبر خوادم DNS.",
+                placeholder: "أدخل الاسم هنا (مثال: myproject أو .com أو google.com)",
+                searchBtn: "بحث",
+                alertEmpty: "يرجى إدخال اسم صحيح للبحث (حروف إنجليزية وأرقام فقط).",
+                alertInvalidDomain: "يرجى إدخال نطاق بصيغة صحيحة، مثال: example.com",
+                alertInvalidExt: "يرجى إدخال امتداد صحيح، مثال: .com",
+                checking: "جاري الفحص...",
+                available: "متاح",
+                taken: "مأخوذ",
+                error: "خطأ",
+                timeout: "انتهت المهلة",
+                speed: "السرعة",
+                pages: "الصفحات",
+                home: "الرئيسية، اتصل بنا...",
+                domainAvailable: "النطاق متاح للتسجيل",
+                price: "السعر التقريبي",
+                perYear: "/ سنوياً",
+                colors: ["بنفسجي", "ذهبي", "أسود رمادي", "أزرق غامق", "أبيض سحابي", "أزرق مائي", "أخضر عشبي"],
+                statusLabel: "الحالة",
+                infoLabel: "الوصف",
+                buyHere: "أماكن الشراء:",
+                visitWebsite: "زيارة الموقع",
+                registerNow: "سجل الآن",
+                noWebsite: "لا يوجد موقع منشور بعد",
+                popularLabel: "الأكثر شيوعاً:",
+                copied: "تم نسخ النطاق",
+                copyFailed: "تعذر النسخ، حاول يدوياً",
+                copyTitle: "نسخ النطاق",
+                clearTitle: "مسح",
+                sortAvailableFirst: "عرض المتاح أولاً",
+                sortDefaultOrder: "الترتيب الافتراضي",
+                summaryAvailable: "متاح",
+                summaryChecked: "تم فحصها",
+                modeToLight: "التبديل للوضع الفاتح",
+                modeToDark: "التبديل للوضع الداكن",
+                footerNote: "الأسعار المعروضة تقريبية. تأكد من السعر النهائي لدى مزود التسجيل قبل الشراء."
+            }
+        };
+
+        const domainPrices = {
+            '.com': '$10.99', '.net': '$12.99', '.org': '$11.99', '.info': '$14.99',
+            '.biz': '$15.99', '.co': '$25.99', '.io': '$39.99', '.ai': '$69.99',
+            '.app': '$14.99', '.dev': '$14.99', '.tech': '$4.99', '.network': '$18.99',
+            '.store': '$1.99', '.shop': '$2.99', '.online': '$1.99', '.market': '$24.99',
+            '.me': '$18.99', '.tv': '$29.99', '.design': '$4.99', '.art': '$13.99',
+            '.blog': '$24.99', '.pro': '$16.99', '.site': '$1.99', '.website': '$1.99',
+            '.space': '$1.99', '.club': '$13.99', '.xyz': '$1.99', '.global': '$69.99',
+            '.us': '$7.99', '.uk': '$6.99', '.ca': '$11.99', '.in': '$5.99'
+        };
+
+        const popularExtensions = ['.com', '.io', '.ai', '.net', '.org', '.dev', '.app', '.co'];
+
+        const tldInfo = {
+            en: {
+                '.com': 'Commercial businesses and general purpose.',
+                '.net': 'Network infrastructures and technology.',
+                '.org': 'Organizations, non-profits, and communities.',
+                '.info': 'Informational sites and resources.',
+                '.io': 'Tech startups, software, and games.',
+                '.ai': 'Artificial Intelligence projects.',
+                'default': 'A popular domain extension for global use.'
+            },
+            ar: {
+                '.com': 'الأعمال التجارية والأغراض العامة.',
+                '.net': 'البنى التحتية للشبكات والتكنولوجيا.',
+                '.org': 'المنظمات غير الربحية والمجتمعات.',
+                '.info': 'المواقع المعلوماتية والمصادر.',
+                '.io': 'الشركات التقنية الناشئة والبرمجيات والألعاب.',
+                '.ai': 'مشاريع الذكاء الاصطناعي.',
+                'default': 'امتداد نطاق شهير للاستخدام العالمي.'
+            }
+        };
+
+        // ---------- أدوات الأمان والمساعدة ----------
+
+        // يمنع حقن HTML/JS عند إدراج أي نص قادم من المستخدم داخل innerHTML
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // يتحقق من أن النص عبارة عن اسم نطاق كامل صالح (مثال: example.com) قبل استخدامه في أي طلب أو رابط
+        function isValidHostname(value) {
+            if (value.length > 253) return false;
+            const labelPattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
+            const labels = value.split('.');
+            if (labels.length < 2) return false;
+            return labels.every(label => labelPattern.test(label));
+        }
+
+        // يتحقق من صيغة الامتداد (مثال: .com) قبل عرض معلوماته
+        function isValidExtension(value) {
+            return /^\.[a-z]{2,24}$/.test(value);
+        }
+
+        function getDomainPrice(domain) {
+            const ext = domain.substring(domain.lastIndexOf('.'));
+            return domainPrices[ext] || '$12.99';
+        }
+
+        function getTldDescription(ext) {
+            return tldInfo[currentLang][ext] || tldInfo[currentLang]['default'];
+        }
+
+        function faviconUrl(domain) {
+            return `https://www.google.com/s2/favicons?sz=64&domain=${encodeURIComponent(domain)}`;
+        }
+
+        // صورة بديلة محلية (SVG) بدلاً من الاعتماد على خدمة خارجية قد لا تعمل دائماً
+        function placeholderImage(label) {
+            const safeLabel = escapeHtml(label);
+            const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='160'><rect width='100%' height='100%' fill='#20242c'/><text x='50%' y='50%' fill='#7b8794' font-size='14' font-family='monospace' text-anchor='middle' dominant-baseline='middle'>${safeLabel}</text></svg>`;
+            return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+        }
+
+        // تنفيذ fetch مع مهلة زمنية لتفادي تعليق الطلب إلى الأبد
+        async function fetchWithTimeout(url, ms) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), ms || 7000);
+            try {
+                return await fetch(url, { signal: controller.signal });
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        // ---------- الحالة العامة ----------
+
+        let currentLang = 'en';
+        let isSearching = false;
+        let pendingChecks = 0;
+        let checkedCount = 0;
+        let availableCount = 0;
+        let sortedAvailableFirst = false;
+
+        const htmlElement = document.documentElement;
+        const langSelector = document.getElementById('langSelector');
+        const themeSelector = document.getElementById('themeSelector');
+        const modeToggle = document.getElementById('modeToggle');
+        const resultsArea = document.getElementById('resultsArea');
+        const domainInput = document.getElementById('domainInput');
+        const clearInputBtn = document.getElementById('clearInputBtn');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchBtnLabel = document.getElementById('searchBtnLabel');
+        const resultsSummary = document.getElementById('resultsSummary');
+        const summaryCounts = document.getElementById('summaryCounts');
+        const sortToggle = document.getElementById('sortToggle');
+        const popularTlds = document.getElementById('popularTlds');
+        const popularLabel = document.getElementById('popularLabel');
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        let alertTimeout;
+
+        // ---------- اللغة والمظهر ----------
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            htmlElement.lang = lang;
+            htmlElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+            document.title = t.title;
+            document.getElementById('eyebrowText').textContent = t.eyebrow;
+            document.getElementById('heroTitle').textContent = t.heroTitle;
+            document.getElementById('heroDesc').textContent = t.heroDesc;
+            searchBtnLabel.textContent = t.searchBtn;
+            domainInput.placeholder = t.placeholder;
+            domainInput.setAttribute('aria-label', t.placeholder);
+            clearInputBtn.title = t.clearTitle;
+            clearInputBtn.setAttribute('aria-label', t.clearTitle);
+            popularLabel.textContent = t.popularLabel;
+            document.getElementById('footerNote').textContent = t.footerNote;
+            sortToggle.textContent = sortedAvailableFirst ? t.sortDefaultOrder : t.sortAvailableFirst;
+
+            Array.from(themeSelector.options).forEach((option, index) => {
+                option.text = t.colors[index];
+            });
+
+            resultsArea.innerHTML = '';
+            hideSummary();
+        }
+
+        function applyThemeMode(mode) {
+            htmlElement.setAttribute('data-theme', mode);
+            try { localStorage.setItem('vydomain-theme', mode); } catch (e) {}
+            modeToggle.textContent = mode === 'dark' ? '☀️' : '🌙';
+            modeToggle.setAttribute('aria-label', mode === 'dark' ? translations[currentLang].modeToLight : translations[currentLang].modeToDark);
+            if (themeColorMeta) themeColorMeta.setAttribute('content', mode === 'dark' ? '#0f1115' : '#f8fafc');
+        }
+
+        langSelector.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+            try { localStorage.setItem('vydomain-lang', e.target.value); } catch (err) {}
+        });
+
+        themeSelector.addEventListener('change', (e) => {
+            htmlElement.setAttribute('data-color', e.target.value);
+            try { localStorage.setItem('vydomain-color', e.target.value); } catch (err) {}
+        });
+
+        modeToggle.addEventListener('click', () => {
+            const current = htmlElement.getAttribute('data-theme');
+            applyThemeMode(current === 'dark' ? 'light' : 'dark');
+        });
+
+        // ---------- التنبيهات ----------
+
+        function showCustomAlert(message, type) {
+            const alertBox = document.getElementById('customAlert');
+            alertBox.textContent = message;
+            alertBox.classList.remove('success');
+            if (type === 'success') alertBox.classList.add('success');
+            alertBox.classList.add('show');
+
+            clearTimeout(alertTimeout);
+            alertTimeout = setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3500);
+        }
+
+        // ---------- حقل الإدخال ----------
+
+        domainInput.addEventListener('input', () => {
+            clearInputBtn.classList.toggle('visible', domainInput.value.length > 0);
+        });
+
+        domainInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') startSearch();
+            if (e.key === 'Escape') clearInput();
+        });
+
+        clearInputBtn.addEventListener('click', clearInput);
+
+        function clearInput() {
+            domainInput.value = '';
+            clearInputBtn.classList.remove('visible');
+            resultsArea.innerHTML = '';
+            hideSummary();
+            domainInput.focus();
+        }
+
+        // ---------- الامتدادات الشائعة ----------
+
+        popularExtensions.forEach(ext => {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'chip';
+            chip.textContent = ext;
+            chip.addEventListener('click', () => {
+                const name = domainInput.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+                if (!name) {
+                    showCustomAlert(translations[currentLang].alertEmpty, 'error');
+                    domainInput.focus();
+                    return;
+                }
+                domainInput.value = name + ext;
+                startSearch();
+            });
+            popularTlds.appendChild(chip);
+        });
+
+        // ---------- ملخص النتائج والفرز ----------
+
+        function resetSummary(total) {
+            checkedCount = 0;
+            availableCount = 0;
+            sortedAvailableFirst = false;
+            resultsSummary.classList.add('visible');
+            sortToggle.style.display = 'none';
+            renderSummary(total);
+        }
+
+        function hideSummary() {
+            resultsSummary.classList.remove('visible');
+            summaryCounts.innerHTML = '';
+        }
+
+        function renderSummary(total) {
+            const t = translations[currentLang];
+            summaryCounts.innerHTML = `
+                <span class="summary-pill available"><span class="dot"></span>${availableCount} ${escapeHtml(t.summaryAvailable)}</span>
+                <span class="summary-pill taken"><span class="dot"></span>${checkedCount}/${total} ${escapeHtml(t.summaryChecked)}</span>
+            `;
+        }
+
+        sortToggle.addEventListener('click', () => {
+            sortedAvailableFirst = !sortedAvailableFirst;
+            sortToggle.textContent = sortedAvailableFirst ? translations[currentLang].sortDefaultOrder : translations[currentLang].sortAvailableFirst;
+
+            const cards = Array.from(resultsArea.querySelectorAll('.domain-card'));
+            if (sortedAvailableFirst) {
+                cards.sort((a, b) => {
+                    const aAvail = a.classList.contains('avail-yes') ? 0 : 1;
+                    const bAvail = b.classList.contains('avail-yes') ? 0 : 1;
+                    return aAvail - bAvail;
+                });
+            } else {
+                cards.sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order));
+            }
+            cards.forEach(card => resultsArea.appendChild(card));
+        });
+
+        // ---------- البحث الرئيسي ----------
+
+        function setSearching(active) {
+            isSearching = active;
+            searchBtn.disabled = active;
+            searchBtn.classList.toggle('loading', active);
+        }
+
+        function startSearch() {
+            if (isSearching) return;
+
+            const originalValue = domainInput.value.trim().toLowerCase();
+            const t = translations[currentLang];
+
+            if (!originalValue) {
+                resultsArea.innerHTML = '';
+                hideSummary();
+                showCustomAlert(t.alertEmpty, 'error');
+                return;
+            }
+
+            resultsArea.innerHTML = '';
+            hideSummary();
+
+            // ميزة 1: إذا كان الإدخال يبدأ بنقطة (امتداد مثل .com)
+            if (originalValue.startsWith('.')) {
+                if (!isValidExtension(originalValue)) {
+                    showCustomAlert(t.alertInvalidExt, 'error');
+                    return;
+                }
+                showExtensionInfo(originalValue);
+                return;
+            }
+
+            // ميزة 2: إذا كان الإدخال يحتوي على نقطة في الوسط (موقع كامل مثل google.com)
+            if (originalValue.includes('.')) {
+                if (!isValidHostname(originalValue)) {
+                    showCustomAlert(t.alertInvalidDomain, 'error');
+                    return;
+                }
+                showFullDomainInfo(originalValue);
+                return;
+            }
+
+            // البحث العادي في حال إدخال اسم فقط
+            const domainName = originalValue.replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '');
+            if (!domainName) {
+                showCustomAlert(t.alertEmpty, 'error');
+                return;
+            }
+
+            runBulkSearch(domainName);
+        }
+
+        function runBulkSearch(domainName) {
+            const extensions = Object.keys(domainPrices);
+            setSearching(true);
+            resetSummary(extensions.length);
+            pendingChecks = extensions.length;
+
+            extensions.forEach((ext, index) => {
+                setTimeout(() => {
+                    const fullDomain = domainName + ext;
+
+                    const card = document.createElement('div');
+                    card.className = 'domain-card';
+                    card.dataset.order = String(index);
+
+                    card.innerHTML = `
+                        <div class="domain-card-left">
+                            <div class="domain-name mono">${escapeHtml(fullDomain)}</div>
+                        </div>
+                        <div class="status-cluster">
+                            <button type="button" class="copy-btn" title="${escapeHtml(translations[currentLang].copyTitle)}" aria-label="${escapeHtml(translations[currentLang].copyTitle)}">⧉</button>
+                            <div class="status loading-status">${escapeHtml(translations[currentLang].checking)}</div>
+                        </div>
+                        <div class="preview-tooltip">
+                            <div style="text-align:center; padding:20px; color:var(--text-secondary)">${escapeHtml(translations[currentLang].checking)}</div>
+                        </div>
+                    `;
+
+                    const copyBtn = card.querySelector('.copy-btn');
+                    copyBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        copyToClipboard(fullDomain);
+                    });
+
+                    resultsArea.appendChild(card);
+                    checkRealDomain(fullDomain, card, extensions.length);
+                }, index * 20);
+            });
+        }
+
+        function copyToClipboard(text) {
+            const t = translations[currentLang];
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showCustomAlert(t.copied, 'success'))
+                    .catch(() => showCustomAlert(t.copyFailed, 'error'));
+            } else {
+                showCustomAlert(t.copyFailed, 'error');
+            }
+        }
+
+        function showExtensionInfo(ext) {
+            const t = translations[currentLang];
+            const price = domainPrices[ext] || '$12.99';
+            const description = getTldDescription(ext);
+            const pureExt = ext.replace('.', '');
+
+            const card = document.createElement('div');
+            card.className = 'large-card';
+            card.innerHTML = `
+                <div class="large-card-header">${escapeHtml(ext)}</div>
+                <div class="large-card-content">
+                    <div class="large-card-details">
+                        <div class="info-row">
+                            <span>${escapeHtml(t.price)}:</span>
+                            <strong class="mono" style="color: var(--text-primary)">${escapeHtml(price)} ${escapeHtml(t.perYear)}</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>${escapeHtml(t.infoLabel)}:</span>
+                            <strong style="color: var(--text-primary)">${escapeHtml(description)}</strong>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div style="color:var(--text-secondary); margin-bottom:10px;">${escapeHtml(t.buyHere)}</div>
+                            <div class="buy-links">
+                                <a href="https://www.namecheap.com/domains/registration/results/?domain=${encodeURIComponent(pureExt)}" target="_blank" rel="noopener noreferrer">Namecheap</a>
+                                <a href="https://www.godaddy.com/domainsearch/find?domainToCheck=${encodeURIComponent(pureExt)}" target="_blank" rel="noopener noreferrer">GoDaddy</a>
+                                <a href="https://domains.google.com/registrar/search?searchTerm=${encodeURIComponent(pureExt)}" target="_blank" rel="noopener noreferrer">Google Domains</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultsArea.appendChild(card);
+        }
+
+        async function showFullDomainInfo(domain) {
+            const t = translations[currentLang];
+            setSearching(true);
+
+            const card = document.createElement('div');
+            card.className = 'large-card';
+            card.innerHTML = `<div style="text-align:center; padding: 40px; font-size: 1.2rem; color: var(--text-secondary);">${escapeHtml(t.checking)}</div>`;
+            resultsArea.appendChild(card);
+
+            try {
+                const response = await fetchWithTimeout(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=ANY`);
+                if (!response.ok) throw new Error('bad-response');
+                const data = await response.json();
+
+                const isAvailable = data.Status === 3;
+                const statusText = isAvailable ? t.available : t.taken;
+                const statusColor = isAvailable ? 'var(--success-color)' : 'var(--error-color)';
+                const mockSpeed = (Math.random() * 2 + 0.4).toFixed(1) + 's';
+                const price = getDomainPrice(domain);
+                const safeDomain = escapeHtml(domain);
+
+                card.innerHTML = `
+                    <div class="large-card-header"><img src="${faviconUrl(domain)}" alt="" onerror="this.style.display='none'">${safeDomain}</div>
+                    <div class="large-card-content">
+                        ${!isAvailable
+                            ? `<img class="large-card-img" src="https://image.thum.io/get/width/600/crop/800/http://${encodeURIComponent(domain)}" onerror="this.src='${placeholderImage(t.error)}'" alt="${safeDomain}">`
+                            : `<div class="large-card-img" style="display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--text-secondary); text-align:center; padding: 20px;">${escapeHtml(t.noWebsite)}</div>`
+                        }
+                        <div class="large-card-details">
+                            <div class="info-row">
+                                <span>${escapeHtml(t.statusLabel)}:</span>
+                                <strong style="color: ${statusColor}">${escapeHtml(statusText)}</strong>
+                            </div>
+
+                            ${!isAvailable ? `
+                            <div class="info-row">
+                                <span>${escapeHtml(t.speed)}:</span>
+                                <strong class="mono" style="color: var(--text-primary)">${escapeHtml(mockSpeed)}</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>${escapeHtml(t.pages)}:</span>
+                                <strong style="color: var(--text-primary)">${escapeHtml(t.home)}</strong>
+                            </div>
+                            <div class="buy-links" style="margin-top:20px;">
+                                <a href="http://${encodeURIComponent(domain)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t.visitWebsite)}</a>
+                            </div>
+                            ` : `
+                            <div class="info-row">
+                                <span>${escapeHtml(t.price)}:</span>
+                                <strong class="mono" style="color: var(--text-primary)">${escapeHtml(price)} ${escapeHtml(t.perYear)}</strong>
+                            </div>
+                            <div class="buy-links" style="margin-top:20px;">
+                                <a href="https://www.namecheap.com/domains/registration/results/?domain=${encodeURIComponent(domain)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t.registerNow)}</a>
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                const message = error && error.name === 'AbortError' ? t.timeout : t.error;
+                card.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--error-color); font-size: 1.2rem;">${escapeHtml(message)}</div>`;
+            } finally {
+                setSearching(false);
+            }
+        }
+
+        async function checkRealDomain(domain, cardElement, total) {
+            const t = translations[currentLang];
+            const statusElement = cardElement.querySelector('.status');
+            const tooltip = cardElement.querySelector('.preview-tooltip');
+
+            try {
+                const response = await fetchWithTimeout(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=ANY`);
+                if (!response.ok) throw new Error('bad-response');
+                const data = await response.json();
+
+                if (data.Status === 3) {
+                    statusElement.className = 'status available';
+                    statusElement.textContent = t.available;
+                    cardElement.classList.add('avail-yes', 'clickable');
+                    cardElement.onclick = () => showFullDomainInfo(domain);
+
+                    const price = getDomainPrice(domain);
+
+                    tooltip.innerHTML = `
+                        <div style="text-align:center; padding:8px;">
+                            <div style="color: var(--success-color); font-weight: bold; margin-bottom: 12px;">${escapeHtml(t.domainAvailable)}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">${escapeHtml(t.price)}:</span>
+                                <div class="mono">
+                                    <strong style="color: var(--text-primary); font-size: 1.2rem;">${escapeHtml(price)}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${escapeHtml(t.perYear)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    availableCount++;
+                } else {
+                    statusElement.className = 'status taken';
+                    statusElement.textContent = t.taken;
+                    cardElement.classList.add('clickable');
+                    cardElement.onclick = () => window.open('http://' + domain, '_blank', 'noopener,noreferrer');
+
+                    const mockSpeed = (Math.random() * 2 + 0.4).toFixed(1) + 's';
+
+                    tooltip.innerHTML = `
+                        <img class="preview-img" src="https://image.thum.io/get/width/250/crop/600/http://${encodeURIComponent(domain)}" alt="Preview" onerror="this.src='${placeholderImage(t.error)}'">
+                        <div class="preview-details">
+                            <div class="preview-row"><span>${escapeHtml(t.speed)}:</span> <strong>${escapeHtml(mockSpeed)}</strong></div>
+                            <div class="preview-row"><span>${escapeHtml(t.pages)}:</span> <strong>${escapeHtml(t.home)}</strong></div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                const message = error && error.name === 'AbortError' ? t.timeout : t.error;
+                statusElement.className = 'status taken';
+                statusElement.textContent = message;
+                tooltip.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-secondary)">${escapeHtml(message)}</div>`;
+            } finally {
+                checkedCount++;
+                renderSummary(total);
+                pendingChecks--;
+                if (pendingChecks <= 0) {
+                    setSearching(false);
+                    if (availableCount > 0) sortToggle.style.display = 'inline-flex';
+                }
+            }
+        }
+
+        // ---------- التهيئة الأولية ----------
+
+        (function init() {
+            let savedLang = 'en';
+            let savedTheme = htmlElement.getAttribute('data-theme') || 'dark';
+            let savedColor = htmlElement.getAttribute('data-color') || 'purple';
+            try {
+                savedLang = localStorage.getItem('vydomain-lang') || htmlElement.getAttribute('lang') || 'en';
+            } catch (e) {}
+
+            langSelector.value = savedLang;
+            themeSelector.value = savedColor;
+            changeLanguage(savedLang);
+            applyThemeMode(savedTheme);
+        })();
+    </script>
+</body>
+</html>
